@@ -1,3 +1,7 @@
+.map {
+  margin: 50px;
+  height: 500px;
+}
 @font-face {
   font-family: "Source Sans Pro";
   font-style: normal;
@@ -19,7 +23,8 @@
   background: linear-gradient(to right, #fc766aff, #5b84b1ff);
   margin: 0;
   min-height: 80vh;
-  padding: 60px 0;
+  padding-top: 50px;
+  /* padding: 60px 0; */
   overflow: hidden;
   font-family: "Source Sans Pro", sans-serif;
 }
@@ -58,7 +63,7 @@
   appearance: none;
   outline: 0;
   /* border: 1px solid #0e6e02; */
-  width: 100%;
+  /* width: 100%; */
   border-radius: 3px;
   padding: 10px 15px;
   margin: 10px auto 10px auto;

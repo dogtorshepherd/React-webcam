@@ -23,7 +23,7 @@ export class LongdoMap extends Component {
 
     if (!existingScript) {
       const script = document.createElement("script");
-      script.src = `http://api.longdo.com/map/?key=${this.props.mapKey}`;
+      script.src = `https://api.longdo.com/map/?key=${this.props.mapKey}`;
       script.id = "longdoMapScript";
       document.body.appendChild(script);
 

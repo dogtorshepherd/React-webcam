@@ -35,7 +35,9 @@ export const WebcamCapture = (props) => {
             }}
             className="webcam-btn"
           >
-            Retake Image
+            <span role="img" aria-label="Retake Image">
+              📸
+            </span>
           </button>
         ) : (
           <button
@@ -45,7 +47,9 @@ export const WebcamCapture = (props) => {
             }}
             className="webcam-btn"
           >
-            Capture
+            <span role="img" aria-label="Capture">
+              📸
+            </span>
           </button>
         )}
 
@@ -57,7 +61,9 @@ export const WebcamCapture = (props) => {
             }}
             className="webcam-btn"
           >
-            User
+            <span role="img" aria-label="Switch">
+              🔄
+            </span>
           </button>
         ) : (
           <button
@@ -67,7 +73,9 @@ export const WebcamCapture = (props) => {
             }}
             className="webcam-btn"
           >
-            Environment
+            <span role="img" aria-label="Switch">
+              🔄
+            </span>
           </button>
         )}
       </div>

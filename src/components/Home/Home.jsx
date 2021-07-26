@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect } from "react";
 import "./homeStyles.css";
 import { WebcamCapture } from "../Webcam/Webcam";
 import AsyncCreatableSelect from "react-select/creatable";
-import { findRenderedDOMComponentWithClass } from "react-dom/test-utils";
 import firebase from "../../utils/firebase";
 import { longdo, map, LongdoMap } from "../../longdo-map/LongdoMap";
 
@@ -11,6 +10,46 @@ const Home = () => {
   const [image, setImage] = useState("");
   const [lat, setLat] = useState("");
   const [lon, setLon] = useState("");
+  const [markerList, setMarkerList] = useState();
+  var locationList = null;
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(function (position) {
+        setLat(position.coords.latitude.toFixed(7));
+        setLon(position.coords.longitude.toFixed(7));
+        // console.log("Latitude is :", position.coords.latitude);
+        // console.log("Longitude is :", position.coords.longitude);
+      });
+    }
+
+    const markerRef = firebase.database().ref("Marker");
+    markerRef.on("value", (snapshot) => {
+      const markers = snapshot.val();
+      const myMarkerList = [];
+      for (let id in markers) {
+        myMarkerList.push({ id, ...markers[id] });
+      }
+      setMarkerList(myMarkerList);
+      locationList = myMarkerList;
+      // markerList.map((index) => {console.log(index)})
+    });
+  }, []);
+
+  const mockAjaxFromServer = (bound, callback) => {
+    // markerList.map((index) => {
+    //   console.log(index);
+    // });
+    // locationList.map((index) => {
+    //   console.log(index);
+    // });
+    // var locationList = markerList;
+    // for (var i = 0; i < 3; ++i) {
+    //   locationList.push({ lon: bound.minLon + (Math.random() * (bound.maxLon - bound.minLon)),
+    //     lat: bound.minLat + (Math.random() * (bound.maxLat - bound.minLat)) });
+    // }
+    callback(locationList);
+  };
 
   const [value, setValue] = useState();
   const [options, setOptions] = useState([
@@ -22,18 +61,27 @@ const Home = () => {
 
   const initMap = () => {
     map.Layers.setBase(longdo.Layers.GRAY);
-  };
+    map.location(longdo.LocationMode.Geolocation);
+    map.Ui.DPad.visible(false);
+    map.Ui.Zoombar.visible(false);
+    map.Ui.Toolbar.visible(false);
+    map.Ui.LayerSelector.visible(false);
+    map.Ui.Fullscreen.visible(false);
+    map.Ui.Scale.visible(false);
 
-  useEffect(() => {
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(function (position) {
-        setLat(position.coords.latitude.toFixed(7));
-        setLon(position.coords.longitude.toFixed(7));
-        console.log("Latitude is :", position.coords.latitude);
-        console.log("Longitude is :", position.coords.longitude);
+    map.Tags.add(function (tile, zoom) {
+      var bound = longdo.Util.boundOfTile(map.projection(), tile);
+      mockAjaxFromServer(bound, function (locationList) {
+        // for (var i = 0; i < locationList.length; ++i) {
+        //   map.Overlays.add(
+        //     new longdo.Marker(locationList[i], {
+        //       visibleRange: { min: zoom, max: zoom }
+        //     })
+        //   );
+        // }
       });
-    }
-  });
+    });
+  };
 
   const handleChange = useCallback((inputValue) => setValue(inputValue), []);
 
@@ -120,13 +168,15 @@ const Home = () => {
               id="login-button"
               onClick={(e) => submitForm(e)}
             >
-              Submit
+              <span role="img" aria-label="Submit">
+                📍
+              </span>
             </button>
           </form>
         </div>
-        <div className="App">
-          <LongdoMap id="longdo-map" mapKey={mapKey} callback={initMap} />
-        </div>
+      </div>
+      <div className="map">
+        <LongdoMap id="longdo-map" mapKey={mapKey} callback={initMap} />
       </div>
     </div>
   );
